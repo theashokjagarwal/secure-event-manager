@@ -217,6 +217,30 @@ def validate_text(text: str, field_name: str, min_len: int = 2, max_len: int = 5
     return True, trimmed
 
 
+def validate_url(url: str | None) -> tuple[bool, str | None, str]:
+    """
+    SECURITY: Validate external application/registration URLs.
+    Prevents JavaScript execution via malicious URI schemes like 'javascript:', 'data:', 'vbscript:'.
+    Strictly permits only 'http://' or 'https://' URLs.
+    """
+    if not url:
+        return True, None, ""
+    
+    clean_url = url.strip()
+    if len(clean_url) > 500:
+        return False, None, "Application URL cannot exceed 500 characters."
+    
+    lowered = clean_url.lower()
+    if not (lowered.startswith("https://") or lowered.startswith("http://")):
+        return False, None, "Application link must start with https:// or http://"
+    
+    # Block dangerous characters that could break attributes or cause protocol confusion
+    if any(char in clean_url for char in ['"', "'", "<", ">", "`", " ", "\n", "\r"]):
+        return False, None, "Application link contains invalid characters."
+        
+    return True, clean_url, ""
+
+
 def validate_event_date(date_str: str) -> tuple[bool, datetime | None, str]:
     """
     SECURITY: Validate event date format (ISO 8601 / YYYY-MM-DDTHH:MM)

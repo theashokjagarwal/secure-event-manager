@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -37,21 +37,30 @@ class User(Base):
 
 class Event(Base):
     """
-    Event entity representing community or company events.
-    Created by an admin user. Can include secure attachments (flyers, schedules).
+    Event entity representing tech events, hackathons, and college fests across India.
+    Includes city, college/institution, official application links, and AI auto-discovery tracking.
     """
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String(150), nullable=False)
+    title = Column(String(180), nullable=False)
     description = Column(Text, nullable=False)
-    category = Column(String(50), nullable=False)
+    category = Column(String(50), nullable=False)  # Security, Development, AI/ML, Cloud, Web3, etc.
+    event_type = Column(String(50), default="Tech Fest", nullable=False)  # Hackathon, College Fest, Conference, Workshop
+    city = Column(String(100), default="Online", index=True, nullable=False)  # Bengaluru, Mumbai, Delhi NCR, etc.
+    college_name = Column(String(150), nullable=True)  # IIT Bombay, BITS Pilani, etc.
     event_date = Column(DateTime, nullable=False)
     location = Column(String(200), nullable=False)
     
+    # Direct Official Application / Registration URL
+    application_link = Column(String(500), nullable=True)
+
+    # AI Auto-Discovery metadata
+    is_ai_discovered = Column(Boolean, default=False, nullable=False)
+    
     # Secure file attachment fields
-    attachment_filename = Column(String(255), nullable=True)      # Stored unique UUID filename on disk
-    attachment_original_name = Column(String(255), nullable=True)  # Safe original name for display
+    attachment_filename = Column(String(255), nullable=True)
+    attachment_original_name = Column(String(255), nullable=True)
     
     created_by = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -66,8 +75,13 @@ class Event(Base):
             "title": self.title,
             "description": self.description,
             "category": self.category,
+            "event_type": self.event_type,
+            "city": self.city,
+            "college_name": self.college_name,
             "event_date": self.event_date.isoformat() if self.event_date else None,
             "location": self.location,
+            "application_link": self.application_link,
+            "is_ai_discovered": self.is_ai_discovered,
             "has_attachment": bool(self.attachment_filename),
             "attachment_name": self.attachment_original_name,
             "created_by": self.created_by,

@@ -10,7 +10,6 @@ logger = logging.getLogger("secure_event_manager")
 # SECURITY: Using SQLAlchemy ORM ensures all queries use parameterized statements,
 # completely eliminating SQL injection vulnerabilities.
 if Config.DB_TYPE == "sqlite":
-    # SQLite requires check_same_thread=False for multi-threaded Flask apps
     engine = create_engine(
         Config.SQLALCHEMY_DATABASE_URI,
         connect_args={"check_same_thread": False},
@@ -61,11 +60,11 @@ def get_db():
 
 def init_db():
     """
-    Initialize database schema and seed default administrative/demo data if empty.
-    Runs locally with minimal setup!
+    Initialize database schema and seed default administrative/demo data
+    along with verified Indian College & Tech Events if empty.
     """
-    # Import models here so Base knows about all model classes before create_all
     from app.models import User, Event
+    from app.ai_service import INDIAN_EVENTS_KNOWLEDGE_BASE
     import bcrypt
     from datetime import datetime, timedelta
 
@@ -76,7 +75,6 @@ def init_db():
     with get_db() as db:
         admin_exists = db.query(User).filter_by(email="admin@example.com").first()
         if not admin_exists:
-            # SECURITY: Hash default password with bcrypt before storing
             salt = bcrypt.gensalt()
             admin_pwd_hash = bcrypt.hashpw(b"Admin@12345", salt).decode("utf-8")
             demo_admin = User(
@@ -86,6 +84,7 @@ def init_db():
                 role="admin"
             )
             db.add(demo_admin)
+            db.flush()
             logger.info("Default admin user created: admin@example.com")
 
         user_exists = db.query(User).filter_by(email="user@example.com").first()
@@ -99,27 +98,31 @@ def init_db():
                 role="user"
             )
             db.add(demo_user)
+            db.flush()
             logger.info("Default demo user created: user@example.com")
 
-        # Seed sample events if none exist
+        # Seed rich Indian Tech Events & College Fests if empty
         if db.query(Event).count() == 0:
             admin_user = db.query(User).filter_by(email="admin@example.com").first()
             if admin_user:
-                sample_event1 = Event(
-                    title="Cybersecurity Fundamentals Workshop 2026",
-                    description="Hands-on workshop covering OWASP Top 10 vulnerabilities, secure coding practices, and defensive architecture for modern web applications.",
-                    category="Security",
-                    event_date=datetime.utcnow() + timedelta(days=14),
-                    location="Online - Zoom Webinar",
-                    created_by=admin_user.id
-                )
-                sample_event2 = Event(
-                    title="Full-Stack Python & Database Architecture",
-                    description="Learn how to architect clean database abstraction layers supporting both SQLite and MySQL, preventing SQL injection and managing migrations.",
-                    category="Development",
-                    event_date=datetime.utcnow() + timedelta(days=28),
-                    location="Tech Innovation Center, Hall A",
-                    created_by=admin_user.id
-                )
-                db.add_all([sample_event1, sample_event2])
-                logger.info("Sample events seeded successfully.")
+                now = datetime.utcnow()
+                events_to_seed = []
+
+                for item in INDIAN_EVENTS_KNOWLEDGE_BASE:
+                    ev = Event(
+                        title=item["title"],
+                        description=item["description"],
+                        category=item["category"],
+                        event_type=item["event_type"],
+                        city=item["city"],
+                        college_name=item["college_name"],
+                        event_date=now + timedelta(days=item["days_from_now"]),
+                        location=item["location"],
+                        application_link=item["application_link"],
+                        is_ai_discovered=False,
+                        created_by=admin_user.id
+                    )
+                    events_to_seed.append(ev)
+
+                db.add_all(events_to_seed)
+                logger.info(f"Seeded {len(events_to_seed)} Indian college and tech events across cities.")

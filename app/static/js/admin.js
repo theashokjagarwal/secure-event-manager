@@ -1,10 +1,10 @@
 /**
  * ==============================================================================
- * Secure Event Manager - Administrator Controller
+ * Secure Event Manager - Administrator Controller & AI Auto-Discovery
  * ==============================================================================
  * SECURITY FEATURES:
  * 1. Role-Based Access Control verified before loading.
- * 2. File Upload Validation (checks extension and size before transmitting).
+ * 2. URL validation and file upload validation.
  * 3. XSS Prevention: Table rows and modal details created with textContent.
  * 4. Proper HTTP Verbs: DELETE for removing events, POST for creation.
  * ==============================================================================
@@ -22,11 +22,19 @@ async function initAdminPanel() {
   const statsTotalUsers = document.getElementById("stat-total-users");
   const statsTotalRegistrations = document.getElementById("stat-total-registrations");
 
-  const modalBackdrop = document.getElementById("create-event-modal");
-  const openModalBtn = document.getElementById("btn-open-create-modal");
-  const closeModalBtn = document.getElementById("btn-close-create-modal");
+  // Create Event Modal elements
+  const createModal = document.getElementById("create-event-modal");
+  const openCreateBtn = document.getElementById("btn-open-create-modal");
+  const closeCreateBtn = document.getElementById("btn-close-create-modal");
   const createForm = document.getElementById("create-event-form");
 
+  // AI Auto-Discovery Modal elements
+  const aiModal = document.getElementById("ai-discovery-modal");
+  const openAiBtn = document.getElementById("btn-open-ai-modal");
+  const closeAiBtn = document.getElementById("btn-close-ai-modal");
+  const aiForm = document.getElementById("ai-discovery-form");
+
+  // Attendees Modal elements
   const attendeeModal = document.getElementById("attendees-modal");
   const closeAttendeeBtn = document.getElementById("btn-close-attendees-modal");
   const attendeesListContainer = document.getElementById("attendees-list-container");
@@ -36,21 +44,34 @@ async function initAdminPanel() {
   await loadAdminEvents();
 
   // Modal open/close handlers
-  if (openModalBtn) {
-    openModalBtn.addEventListener("click", () => {
+  if (openCreateBtn && createModal) {
+    openCreateBtn.addEventListener("click", () => {
       DOM.hideAlert("create-event-alert");
       createForm.reset();
-      modalBackdrop.classList.add("active");
+      createModal.classList.add("active");
     });
   }
 
-  if (closeModalBtn) {
-    closeModalBtn.addEventListener("click", () => {
-      modalBackdrop.classList.remove("active");
+  if (closeCreateBtn && createModal) {
+    closeCreateBtn.addEventListener("click", () => {
+      createModal.classList.remove("active");
     });
   }
 
-  if (closeAttendeeBtn) {
+  if (openAiBtn && aiModal) {
+    openAiBtn.addEventListener("click", () => {
+      DOM.hideAlert("ai-modal-alert");
+      aiModal.classList.add("active");
+    });
+  }
+
+  if (closeAiBtn && aiModal) {
+    closeAiBtn.addEventListener("click", () => {
+      aiModal.classList.remove("active");
+    });
+  }
+
+  if (closeAttendeeBtn && attendeeModal) {
     closeAttendeeBtn.addEventListener("click", () => {
       attendeeModal.classList.remove("active");
     });
@@ -86,7 +107,7 @@ async function initAdminPanel() {
     if (events.length === 0) {
       const tr = DOM.create("tr");
       const td = DOM.create("td", {
-        text: "No events found. Click 'Create Event' to add one.",
+        text: "No events found. Click 'AI Auto-Discover Events' or 'Create New Event'.",
         attributes: { colspan: "7" }
       });
       tr.appendChild(td);
@@ -100,52 +121,87 @@ async function initAdminPanel() {
       // ID
       tr.appendChild(DOM.create("td", { text: `#${event.id}` }));
 
-      // Title & Category
+      // Title, College & Type
       const titleTd = DOM.create("td");
       titleTd.appendChild(DOM.create("div", {
         text: event.title,
         attributes: { style: "font-weight: 600;" }
       }));
-      titleTd.appendChild(DOM.create("span", {
+
+      const tagsWrap = DOM.create("div", {
+        attributes: { style: "display: flex; gap: 0.3rem; margin-top: 0.25rem; flex-wrap: wrap;" }
+      });
+
+      if (event.college_name) {
+        tagsWrap.appendChild(DOM.create("span", {
+          attributes: { style: "font-size: 0.72rem; font-weight: 700; color: #2563eb;" },
+          text: `🏛️ ${event.college_name}`
+        }));
+      }
+
+      tagsWrap.appendChild(DOM.create("span", {
         className: "category-tag",
         text: event.category
       }));
+
+      tagsWrap.appendChild(DOM.create("span", {
+        className: "role-badge role-user",
+        text: event.event_type || "Tech Fest"
+      }));
+
+      if (event.is_ai_discovered) {
+        tagsWrap.appendChild(DOM.create("span", {
+          className: "role-badge",
+          attributes: { style: "background-color: #e0e7ff; color: #4338ca;" },
+          text: "🤖 AI"
+        }));
+      }
+
+      titleTd.appendChild(tagsWrap);
       tr.appendChild(titleTd);
+
+      // City
+      tr.appendChild(DOM.create("td", {
+        children: [
+          DOM.create("span", {
+            className: "role-badge",
+            attributes: { style: "background-color: #fef3c7; color: #b45309;" },
+            text: `📍 ${event.city}`
+          })
+        ]
+      }));
 
       // Date
       const dateStr = event.event_date ? new Date(event.event_date).toLocaleDateString() : "TBD";
       tr.appendChild(DOM.create("td", { text: dateStr }));
 
-      // Location
-      tr.appendChild(DOM.create("td", { text: event.location }));
-
-      // Registrations count
-      tr.appendChild(DOM.create("td", { text: `${event.registration_count} attendees` }));
-
-      // Attachment indicator
-      const fileTd = DOM.create("td");
-      if (event.has_attachment) {
-        fileTd.appendChild(DOM.create("a", {
+      // Application Link
+      const appLinkTd = DOM.create("td");
+      if (event.application_link) {
+        appLinkTd.appendChild(DOM.create("a", {
           className: "btn btn-secondary btn-sm",
-          text: "📎 View",
+          text: "🔗 Portal",
           attributes: {
-            href: `/api/events/${event.id}/attachment`,
+            href: event.application_link,
             target: "_blank",
             rel: "noopener noreferrer"
           }
         }));
       } else {
-        fileTd.textContent = "None";
+        appLinkTd.textContent = "None";
       }
-      tr.appendChild(fileTd);
+      tr.appendChild(appLinkTd);
 
-      // Action buttons
+      // Registrations
+      tr.appendChild(DOM.create("td", { text: `${event.registration_count} RSVPs` }));
+
+      // Action Buttons
       const actionsTd = DOM.create("td");
       const actionGroup = DOM.create("div", {
-        attributes: { style: "display: flex; gap: 0.5rem;" }
+        attributes: { style: "display: flex; gap: 0.4rem;" }
       });
 
-      // View Attendees Button
+      // Attendees Button
       const viewBtn = DOM.create("button", {
         className: "btn btn-secondary btn-sm",
         text: "Attendees"
@@ -168,27 +224,62 @@ async function initAdminPanel() {
     });
   }
 
-  // Handle Event Creation with File Upload
+  // Handle AI Auto-Discovery Form Submission
+  if (aiForm) {
+    aiForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      DOM.hideAlert("ai-modal-alert");
+
+      const city = document.getElementById("ai-city").value;
+      const event_type = document.getElementById("ai-event-type").value;
+      const count = document.getElementById("ai-count").value;
+      const submitBtn = document.getElementById("btn-submit-ai-discovery");
+
+      DOM.setLoading(submitBtn, true, "🤖 Crawling & Ingesting Events...", "⚡ Launch AI Auto-Discovery");
+
+      const res = await API.request("/api/admin/ai/auto-discover", {
+        method: "POST",
+        body: JSON.stringify({ city, event_type, count: parseInt(count, 10) })
+      });
+
+      DOM.setLoading(submitBtn, false, "", "⚡ Launch AI Auto-Discovery");
+
+      if (res.ok && res.data.success) {
+        aiModal.classList.remove("active");
+        DOM.showAlert("admin-alert", `🎉 ${res.data.message}`, "success");
+        await loadStats();
+        await loadAdminEvents();
+      } else {
+        DOM.showAlert("ai-modal-alert", res.data.error || "Failed to auto-discover events.", "error");
+      }
+    });
+  }
+
+  // Handle Manual Event Creation Form Submission
   if (createForm) {
     createForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       DOM.hideAlert("create-event-alert");
 
       const title = document.getElementById("ev-title").value.trim();
-      const description = document.getElementById("ev-desc").value.trim();
+      const city = document.getElementById("ev-city").value.trim();
+      const college_name = document.getElementById("ev-college").value.trim();
       const category = document.getElementById("ev-cat").value.trim();
+      const event_type = document.getElementById("ev-type").value.trim();
       const date = document.getElementById("ev-date").value;
       const location = document.getElementById("ev-loc").value.trim();
+      const application_link = document.getElementById("ev-app-link").value.trim();
+      const description = document.getElementById("ev-desc").value.trim();
       const fileInput = document.getElementById("ev-file");
       const submitBtn = document.getElementById("btn-submit-event");
 
-      // Client-side text validations
+      // Validations
       if (title.length < 3) {
         DOM.showAlert("create-event-alert", "Title must be at least 3 characters long.", "error");
         return;
       }
-      if (description.length < 10) {
-        DOM.showAlert("create-event-alert", "Description must be at least 10 characters long.", "error");
+      if (!city) {
+        DOM.showAlert("create-event-alert", "Please specify a city.", "error");
         return;
       }
       if (!date) {
@@ -196,25 +287,31 @@ async function initAdminPanel() {
         return;
       }
 
-      // Client-side file validation
+      // Check URL format if provided
+      if (application_link && !application_link.startsWith("http://") && !application_link.startsWith("https://")) {
+        DOM.showAlert("create-event-alert", "Application link must start with https:// or http://", "error");
+        return;
+      }
+
       const formData = new FormData();
       formData.append("title", title);
-      formData.append("description", description);
+      formData.append("city", city);
+      formData.append("college_name", college_name);
       formData.append("category", category);
+      formData.append("event_type", event_type);
       formData.append("event_date", date);
       formData.append("location", location);
+      formData.append("application_link", application_link);
+      formData.append("description", description);
 
       if (fileInput && fileInput.files.length > 0) {
         const file = fileInput.files[0];
-
-        // 1. Check file size (5MB limit)
         const maxBytes = 5 * 1024 * 1024;
         if (file.size > maxBytes) {
           DOM.showAlert("create-event-alert", "File size cannot exceed 5 MB.", "error");
           return;
         }
 
-        // 2. Check file extension
         const allowedExts = ["pdf", "docx", "png", "jpg", "jpeg"];
         const ext = file.name.split(".").pop().toLowerCase();
         if (!allowedExts.includes(ext)) {
@@ -225,7 +322,6 @@ async function initAdminPanel() {
         formData.append("attachment", file);
       }
 
-      // Disable button while saving
       DOM.setLoading(submitBtn, true, "Saving Event...", "Create Event");
 
       const res = await API.request("/api/admin/events", {
@@ -236,7 +332,7 @@ async function initAdminPanel() {
       DOM.setLoading(submitBtn, false, "", "Create Event");
 
       if (res.ok && res.data.success) {
-        modalBackdrop.classList.remove("active");
+        createModal.classList.remove("active");
         DOM.showAlert("admin-alert", "Event created successfully!", "success");
         await loadStats();
         await loadAdminEvents();
@@ -288,7 +384,7 @@ async function initAdminPanel() {
     if (attendees.length === 0) {
       attendeesListContainer.appendChild(DOM.create("p", {
         className: "stat-label",
-        text: "No attendees have registered for this event yet."
+        text: "No attendees have registered for this event yet on EventSecure."
       }));
       return;
     }

@@ -1,290 +1,170 @@
-<div align="center">
+# 🛡️ EventSecure India - AI-Powered College & Tech Event Intelligence
 
-# 🛡️ EventSecure
-
-### *The Bulletproof Full-Stack Event Platform Built for Modern Web Defense*
-
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![Flask](https://img.shields.io/badge/Flask-3.0%2B-black.svg?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
-[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0%2B-red.svg)](https://www.sqlalchemy.org/)
-[![Security](https://img.shields.io/badge/OWASP-Top%2010%20Hardened-brightgreen.svg?logo=shield&logoColor=white)](#-the-10-security-pillars-explained-simply)
-[![Database](https://img.shields.io/badge/Database-SQLite%20%7C%20MySQL-orange.svg)](#-switch-from-sqlite-to-mysql-in-10-seconds)
-[![Tests](https://img.shields.io/badge/Tests-14%2F14%20Passing-success.svg)](file:///Users/apple/.gemini/antigravity/scratch/secure-event-manager/tests)
-[![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-
-<br/>
-
-<p align="center">
-  <strong>Stop building tutorials with vulnerable code.</strong><br/>
-  EventSecure is a clean, developer-friendly event management application designed from the ground up with <b>zero security compromises</b>.
-</p>
-
-[Quick Start](#-quick-start-in-60-seconds) •
-[What It Does](#-what-is-eventsecure-in-simple-words) •
-[Screenshots](#-screenshots) •
-[Security Features](#-the-10-security-pillars-explained-simply) •
-[SQLite to MySQL](#-switch-from-sqlite-to-mysql-in-10-seconds) •
-[Run Tests](#-automated-security-lab-test-suite)
-
-</div>
+A full-stack, security-hardened event discovery platform built with Python, Flask, and SQLAlchemy. It automatically tracks, researches, and curates tech conferences, national hackathons, and college technical fests across India, complete with direct official application links, city filters, and AI-generated preparation roadmaps.
 
 ---
 
-## 📸 Screenshots
+## 📸 Interface Preview
 
-<div align="center">
+### 🇮🇳 1. Pan-India Events Catalog with City & College Filters
+*Browse events across Bengaluru, Delhi NCR, Mumbai, Hyderabad, Pune, Chennai, and Kolkata with verified application links.*
 
-### 🌐 1. Public Event Discovery & Catalog
-*Browse upcoming tech conferences, filter by categories, and search dynamically without XSS vulnerabilities.*
-
-<img src="docs/images/home-catalog.png" alt="Public Events Catalog" width="900" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-
-<br/><br/>
-
-### ⚙️ 2. Admin Command Center & Metrics Dashboard
-*Real-time attendee stats, event management, and Role-Based Access Control (RBAC).*
-
-<img src="docs/images/admin-dashboard.png" alt="Admin Dashboard" width="900" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-
-<br/><br/>
-
-### 📁 3. Hardened Event Creation & Secure File Upload
-*Upload flyers and guides with extension whitelisting, MIME magic-byte verification, and UUID isolation.*
-
-<img src="docs/images/create-event-modal.png" alt="Create Event Modal with File Upload" width="700" style="border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" />
-
-</div>
+![Pan-India Events Catalog](docs/images/india-events-catalog.png)
 
 ---
 
-## 💡 What is EventSecure? (In Simple Words)
+### 🤖 2. AI Event Preparation Roadmap & Skill Guide
+*Instant AI-generated technical roadmaps, recommended team structures, and tactical tips for any hackathon or fest.*
 
-Most online web development tutorials teach beginner developers how to build an app, but they leave out security. They concatenate user strings into database queries, store plain-text passwords, and allow users to upload malicious script files. 
-
-**EventSecure solves this.** It is a complete, beginner-friendly web application where:
-1. **Regular Attendees** can browse tech events, search topics, create secure accounts, register for events with one click, and download official schedules.
-2. **Administrators** have a dedicated protected portal to create events, monitor attendee registrations, and upload session attachments safely.
-3. **Every Single Interaction** is fortified against real-world cyberattacks (SQL injection, XSS, CSRF, brute-forcing, executable uploads, and credential leaks).
+![AI Preparation Roadmap Modal](docs/images/ai-prep-guide-modal.png)
 
 ---
 
-## 🚀 Quick Start (In 60 Seconds)
+### ⚡ 3. Admin Command Center with Real-Time AI Auto-Discovery
+*One-click AI research engine that discovers, validates, and ingests upcoming events into the database without duplicates.*
 
-EventSecure runs locally with **zero database configuration** — it uses SQLite by default!
+![Admin Command Center with AI](docs/images/admin-ai-dashboard.png)
 
-### 1. Clone & Enter Project
+---
+
+## 💡 What This Platform Does (In Simple Words)
+
+1. **Find College Fests & Hackathons Across India**: Explore premier events from institutes like **IIT Bombay (Techfest)**, **IIT Madras (Shaastra)**, **BITS Pilani (APOGEE)**, **IIIT Hyderabad (Megathon)**, **IIT Delhi (Tryst)**, and national hackathons like **Smart India Hackathon (SIH)** and **ETHIndia**.
+2. **Direct Official Application Links**: Every event provides an authentic, validated external portal link so students and developers can register immediately on the official website.
+3. **Multi-City & Category Sorting**: Filter events by top tech hubs (Bengaluru, Delhi NCR, Mumbai, Hyderabad, Pune, Chennai, Ahmedabad, Kolkata, Jaipur) and event categories (Hackathons, College Fests, Conferences, Workshops).
+4. **AI-Powered Event Researcher**: Administrators can click one button to trigger the AI engine, which researches real-world events across India, verifies dates and links, and automatically inserts them into the live database.
+5. **AI Prep Guides for Participants**: Attendees can click the **AI Roadmap** button on any event card to receive an instant breakdown of required tech stacks (e.g., Solidity for ETHIndia, PyTorch for AI hackathons), ideal team compositions, and winning strategies.
+6. **Defensive Security Standards**: Built with prepared statements (zero SQL injection), BCrypt password hashing, JWT expiration, XSS-safe DOM rendering, rate limiting against brute-force attacks, and safe file uploads.
+
+---
+
+## ⚡ Quick Start (Local Setup)
+
+The project runs locally with **SQLite by default**, requiring zero external database setup.
+
+### 1. Set Up Environment
 ```bash
+# Clone the repository
 git clone https://github.com/theashokjagarwal/secure-event-manager.git
 cd secure-event-manager
-```
 
-### 2. Setup Virtual Environment
-```bash
-# Create virtual environment
+# Create and activate virtual environment
 python3 -m venv venv
-
-# Activate it (macOS/Linux)
-source venv/bin/activate
-
-# Windows users:
-# venv\Scripts\activate
+source venv/bin/activate    # On Windows: venv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-### 3. Launch App
+### 2. Launch Application
 ```bash
 python run.py
 ```
-👉 Open your browser to **`http://127.0.0.1:5050`**
+Open **`http://127.0.0.1:5050`** in your browser.
 
-### 🔑 Instant Test Accounts
-The database automatically seeds two ready-to-test accounts on first launch:
-
-| Role | Email | Password | Privileges |
+### 🔑 Seeded Demo Accounts
+| Role | Email | Password | Access Level |
 |---|---|---|---|
-| **Admin** | `admin@example.com` | `Admin@12345` | Full access to `/admin`, create/delete events, view attendees |
-| **User** | `user@example.com` | `User@12345` | Access to `/dashboard`, register/cancel event RSVPs |
+| **Administrator** | `admin@example.com` | `Admin@12345` | `/admin` (AI Auto-Discovery, Event Management) |
+| **Attendee** | `user@example.com` | `User@12345` | `/dashboard` (Personal RSVPs, Schedule Downloads) |
 
 ---
 
-## 🔄 Switch from SQLite to MySQL in 10 Seconds
+## 🗄️ Database Architecture: SQLite to MySQL Without Rewriting Code
 
-EventSecure uses a clean **ORM Abstraction Layer (SQLAlchemy)**. Your business logic, controllers, and queries never interact with database-specific syntax.
+The database layer in `app/database.py` uses SQLAlchemy ORM, isolating database operations from backend logic.
 
-```
-       [ Frontend UI & REST APIs ]
-                    │
-                    ▼
-     [ SQLAlchemy ORM Abstraction ]  <-- Parameterized queries (Zero SQL injection)
-                    │
-        ┌───────────┴───────────┐
-        ▼                       ▼
-  [ SQLite Engine ]       [ MySQL Engine ]
-   (Local zero-setup)     (Production-ready)
-```
-
-### To switch to MySQL:
-Simply update your `.env` file:
-```ini
-# Change this:
-DB_TYPE=mysql
-
-# Set your MySQL server credentials:
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=secure_events
-DB_USER=your_mysql_username
-DB_PASSWORD=your_mysql_password
-```
-Restart the app:
-```bash
-python run.py
-```
-**Zero backend code changes needed.** The tables, relationships, and seed data will be created automatically in MySQL.
+To switch from SQLite to MySQL:
+1. Open your `.env` file.
+2. Change the configuration:
+   ```ini
+   DB_TYPE=mysql
+   DB_HOST=localhost
+   DB_PORT=3306
+   DB_NAME=secure_events
+   DB_USER=your_mysql_user
+   DB_PASSWORD=your_mysql_password
+   ```
+3. Restart `python run.py`. SQLAlchemy will automatically create tables and manage connections via MySQL connection pooling.
 
 ---
 
-## 🛡️ The 10 Security Pillars (Explained Simply)
+## 🛡️ Security Features & Defensive Controls
 
-Every feature in EventSecure comes with comments in the source code explaining *why* it is there:
-
-### 1. 💉 SQL Injection Prevention
-* **The Danger:** Attackers type SQL code like `' OR '1'='1` into login or search boxes to trick the database into handing over private data.
-* **Our Defense:** We never use string concatenation (`f"SELECT... {input}"`). Instead, SQLAlchemy converts all inputs into **parameterized queries**, treating all inputs as harmless text.
-
-### 2. 🔐 BCrypt Password Hashing
-* **The Danger:** If a database is breached and passwords are stored in plain text or fast hashes (MD5/SHA1), hackers immediately read everyone's credentials.
-* **Our Defense:** Passwords are encrypted with **BCrypt**, which adds a random cryptographic salt and uses a deliberate, slow key-derivation function. We verify passwords in constant time to prevent timing attacks.
-
-### 3. 🎫 JWT Authentication & RBAC
-* **The Danger:** Attackers fake user IDs or edit tokens to grant themselves administrator privileges.
-* **Our Defense:** Authenticated sessions use cryptographically signed **JSON Web Tokens (JWT)** with strict expiration times (`exp`). Admin-only endpoints verify both token signature and the user's role claim via `@admin_required`.
-
-### 4. 🛑 Cross-Site Scripting (XSS) Prevention
-* **The Danger:** Hackers submit malicious `<script>` tags in event titles to run malware on other visitors' machines.
-* **Our Defense:** All frontend JavaScript uses `textContent` and safe DOM builders. Untrusted data is **never** assigned to `innerHTML`. In addition, strict **Content Security Policy (CSP)** HTTP headers prevent unauthorized external scripts.
-
-### 5. 🎭 Cross-Site Request Forgery (CSRF) Mitigation
-* **The Danger:** A malicious external site tricks a user's browser into deleting an event or registering without their knowledge.
-* **Our Defense:** State changes strictly require `POST`, `PUT`, or `DELETE` verbs with `SameSite=Lax` cookies and custom `X-Requested-With: XMLHttpRequest` headers that cross-origin scripts cannot forge.
-
-### 6. 🔍 Dual Input Validation & Sanitization
-* **The Danger:** Oversized inputs cause buffer overflows; malicious characters crash backend parsers.
-* **Our Defense:** Dual-layer checks (in JavaScript for instant feedback, and in Python for bulletproof security). Validates email formats, password complexity (uppercase, lowercase, number, special char), and future date constraints.
-
-### 7. ☣️ Secure File Uploads (No Executable Malware)
-* **The Danger:** Attackers upload `.php`, `.sh`, or `.exe` files or use path traversal (`../../shell.sh`) to gain remote command execution on the server.
-* **Our Defense:**
-  - Whitelist only safe formats: `.pdf`, `.docx`, `.png`, `.jpg`.
-  - Rejects scripts and executables explicitly.
-  - Inspects file **magic bytes** (ensuring a file named `flyer.png` is an authentic image, not a renamed script).
-  - Saves files with randomized **UUID filenames** outside the web root to eliminate path traversal.
-
-### 8. ⏱️ Rate Limiting & User Enumeration Defense
-* **The Danger:** Automated bots make 10,000 login attempts per second to guess user passwords.
-* **Our Defense:** Sliding window rate limiter throttles authentication to 5 attempts per minute per IP (returns HTTP 429). Authentication errors return generic responses (`"Invalid email or password"`) so attackers cannot discover valid emails.
-
-### 9. 🔒 Environment Variable Isolation
-* **The Danger:** Accidentally pushing database passwords or secret keys to a public GitHub repository.
-* **Our Defense:** All secrets live in `.env` (loaded with `python-dotenv`). `.gitignore` guarantees that `.env` and SQLite `.db` files never touch Git. A clean, documented `.env.example` is provided.
-
-### 10. 📝 Auditing & Scrubbed Logging
-* **The Danger:** Logs that expose sensitive passwords or fail to record security breaches.
-* **Our Defense:** Failed login attempts and administrative actions are logged with IP addresses and timestamps to `app.log`. Passwords and authorization tokens are strictly scrubbed.
+1. **SQL Injection Defense**: All database queries use SQLAlchemy ORM parameterized statements (`filter`, `filter_by`). User input is never concatenated directly into SQL strings.
+2. **Password Security**: Passwords are salted and hashed using BCrypt. Passwords are verified in constant time to eliminate timing attacks.
+3. **JWT Authentication & RBAC**: Stateless authentication with cryptographic HMAC-SHA256 signatures, expiration claims (`exp`), and `@admin_required` route decorators.
+4. **XSS Prevention**: Frontend JavaScript uses `textContent` and `document.createElement`. User strings are never injected into `innerHTML`. Content Security Policy (CSP) headers block unauthorized external scripts.
+5. **URL & Link Validation**: External application links are validated server-side to enforce `https://` or `http://` protocols, neutralizing `javascript:` URI injection attacks.
+6. **CSRF Mitigation**: Mutating endpoints require `POST`, `PUT`, or `DELETE` methods, `SameSite=Lax` cookies, and custom headers (`X-Requested-With`).
+7. **File Upload Security**: Uploads are restricted to `.pdf`, `.docx`, `.png`, `.jpg`, and capped at 5MB. Magic-byte inspection verifies file headers, and files are stored with random UUID names outside web-accessible roots. Executables (`.exe`, `.sh`, `.bat`) are rejected.
+8. **Rate Limiting & Anti-Enumeration**: Authentication endpoints throttle requests to 5 attempts per minute per IP, responding with HTTP 429. Failed logins return generic messages (`Invalid email or password`) to prevent account harvesting.
+9. **Environment Variable Isolation**: Secrets are kept in `.env` and excluded from version control via `.gitignore`.
+10. **Structured Logging**: Failed logins and administrative changes are logged with client IP addresses and timestamps. Sensitive credentials and tokens are scrubbed from log outputs.
 
 ---
 
-## 🔬 Automated Security Lab (Test Suite)
+## 🧪 Automated Testing Lab
 
-EventSecure includes 14 comprehensive unit and integration tests verifying every defensive layer:
+The repository includes 19 comprehensive unit and integration tests covering security controls, AI capabilities, and city filtering:
 
 ```bash
 python -m unittest discover tests -v
 ```
 
-```
-test_sql_injection_in_login_email       ... OK (Blocks ' OR '1'='1)
-test_sql_injection_in_search_events     ... OK (Escapes union queries)
-test_bcrypt_password_hashing            ... OK (Salts & hashes properly)
-test_jwt_tampering_rejected             ... OK (Rejects forged signatures)
-test_jwt_expiration                     ... OK (Rejects expired tokens)
-test_regular_user_cannot_access_admin   ... OK (Returns 403 Forbidden)
-test_admin_can_access_admin_api         ... OK (Allows valid admin)
-test_auth_rate_limiting                 ... OK (Returns 429 Too Many Requests)
-test_blocked_executable_upload          ... OK (Blocks .sh, .exe, .bat)
-test_allowed_pdf_upload                 ... OK (Accepts verified PDF)
-test_weak_password_rejected             ... OK (Enforces complexity)
-test_past_event_date_rejected           ... OK (Enforces future dates)
-test_security_headers_present           ... OK (CSP, nosniff, DENY)
-test_full_application_lifecycle         ... OK (End-to-End integration test)
-----------------------------------------------------------------------
-Ran 14 tests in 9.6s - ALL TESTS PASSED!
-```
+### Verified Test Cases:
+* **SQL Injection**: Blocks `' OR '1'='1` and union-based extraction attempts.
+* **BCrypt Hashing**: Verifies unique salts and slow one-way encryption.
+* **JWT Security**: Rejects tampered tokens and expired sessions.
+* **Role-Based Access Control**: Rejects non-admin users from administrative and AI auto-discovery endpoints with HTTP 403.
+* **Rate Limiting**: Enforces HTTP 429 after 5 failed login attempts.
+* **File Upload Defense**: Blocks scripts (`.sh`, `.exe`, `.bat`), verifies magic bytes for valid documents.
+* **URL Sanitization**: Blocks `javascript:` pseudo-protocol attacks in application links.
+* **AI Roadmap Generator**: Verifies skill extraction, team strategies, and tactical tips.
+* **City & College Filtering**: Confirms accurate event retrieval by Indian metropolitan areas and college names.
+* **Full Lifecycle**: End-to-end user registration, login, event creation, attendee RSVP, and cancellation.
 
 ---
 
-## 📂 Project Architecture
+## 📂 Project Structure
 
 ```
 secure-event-manager/
-├── .env.example              # Documented environment template
+├── .env.example              # Documented environment variable template
 ├── .env                      # Local development secrets (git-ignored)
 ├── .gitignore                # Protects secrets, databases, and logs
-├── README.md                 # Project documentation & security guide
+├── README.md                 # Project documentation and user guide
 ├── requirements.txt          # Python dependencies
-├── run.py                    # Application entry point
+├── run.py                    # Application launch script
 ├── app/
-│   ├── __init__.py           # Flask app factory, CSP headers, error handlers
-│   ├── config.py             # Configuration loader & whitelist rules
-│   ├── database.py           # SQLAlchemy layer (SQLite / MySQL)
+│   ├── __init__.py           # Flask factory, CSP headers, error handlers
+│   ├── config.py             # Settings, file limits, and environment loader
+│   ├── database.py           # SQLAlchemy abstraction layer (SQLite / MySQL)
 │   ├── models.py             # User, Event, Registration ORM entities
 │   ├── security.py           # BCrypt, JWT, RBAC, validators, rate limiting
+│   ├── ai_service.py         # AI Event Researcher & Roadmap Generator
 │   ├── routes/
-│   │   ├── auth_routes.py    # Login, register, logout, profile
-│   │   ├── event_routes.py   # Public catalog, RSVP, attachment downloads
-│   │   └── admin_routes.py   # Admin operations & analytics
+│   │   ├── auth_routes.py    # Authentication endpoints
+│   │   ├── event_routes.py   # Public events, city filters, AI prep guides
+│   │   └── admin_routes.py   # Event management & AI auto-discovery API
 │   ├── static/
-│   │   ├── css/style.css     # Clean responsive modern design system
+│   │   ├── css/style.css     # Responsive design system
 │   │   └── js/
-│   │       ├── api.js        # Safe DOM builder, CSRF headers, JWT client
-│   │       ├── auth.js       # Route guards, real-time password checklist
-│   │       ├── events.js     # Public catalog & attendee dashboard
-│   │       └── admin.js      # Admin table controller & file validation
+│   │       ├── api.js        # Safe DOM builder, CSRF headers, API client
+│   │       ├── auth.js       # Route guards, password strength meter
+│   │       ├── events.js     # Public catalog, city filters, AI roadmap modal
+│   │       └── admin.js      # Admin console & AI discovery controller
 │   ├── templates/
-│   │   ├── index.html        # Public event discovery
-│   │   ├── login.html        # Clean login interface
-│   │   ├── register.html     # Registration with password strength meter
-│   │   ├── dashboard.html    # Attendee dashboard
-│   │   └── admin.html        # Admin management console
-│   └── uploads/              # Isolated directory for secure file storage
+│   │   ├── index.html        # Public discovery page with Indian city filters
+│   │   ├── login.html        # Authentication view
+│   │   ├── register.html     # Registration with real-time checklist
+│   │   ├── dashboard.html    # Attendee management dashboard
+│   │   └── admin.html        # Administrator console with AI discovery modal
+│   └── uploads/              # Secure directory for document attachments
 ├── docs/
 │   └── images/               # High-resolution screenshots
 └── tests/
-    ├── test_security.py      # 13 dedicated security unit tests
-    └── test_e2e.py           # End-to-end integration test
+    ├── test_security.py      # Core security unit tests
+    ├── test_ai_features.py   # AI features, URL validation, and city filters
+    └── test_e2e.py           # Complete application integration test
 ```
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/NewFeature`)
-3. Commit your changes (`git commit -m 'Add awesome feature'`)
-4. Push to the branch (`git push origin feature/NewFeature`)
-5. Open a Pull Request
-
----
-
-## 🌟 Show Your Support
-
-If you found this project helpful for learning web security or clean architecture, please give it a **⭐ Star** on GitHub!
-
----
-
-## 📜 License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.

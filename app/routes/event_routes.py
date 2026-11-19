@@ -1,8 +1,9 @@
 import os
-from flask import Blueprint, request, jsonify, send_from_directory, current_app
+from flask import Blueprint, request, jsonify, send_from_directory
 from app.database import get_db
 from app.models import Event, Registration
 from app.security import login_required, log_audit, log_security_alert
+from app.ai_service import AIEventResearcher
 from app.config import Config
 
 event_bp = Blueprint("events", __name__, url_prefix="/api")
@@ -11,36 +12,52 @@ event_bp = Blueprint("events", __name__, url_prefix="/api")
 @event_bp.route("/events", methods=["GET"])
 def list_events():
     """
-    Public Event Catalog
+    Public Events Catalog supporting City, College, Event Type & Search Filters.
     SECURITY:
     - Search queries and filters are passed strictly through SQLAlchemy ORM parameters.
     - No SQL string concatenation is ever performed.
-    - Safe for public consumption.
     """
     search_query = request.args.get("q", "").strip()
     category = request.args.get("category", "").strip()
+    city = request.args.get("city", "").strip()
+    college = request.args.get("college", "").strip()
+    event_type = request.args.get("event_type", "").strip()
 
     with get_db() as db:
-        # Base query using ORM parameterized query builder
         query = db.query(Event)
 
         # Sanitize and apply filters safely
         if search_query:
-            # SQLAlchemy ilike with parameterized binding prevents SQL Injection
             search_pattern = f"%{search_query[:50]}%"
             query = query.filter(
                 (Event.title.ilike(search_pattern)) | 
                 (Event.description.ilike(search_pattern)) |
-                (Event.location.ilike(search_pattern))
+                (Event.location.ilike(search_pattern)) |
+                (Event.city.ilike(search_pattern)) |
+                (Event.college_name.ilike(search_pattern))
             )
 
-        if category:
-            query = query.filter(Event.category == category[:30])
+        if category and category.lower() != "all":
+            query = query.filter(Event.category == category[:40])
+
+        if city and city.lower() != "all":
+            query = query.filter(Event.city.ilike(f"%{city[:40]}%"))
+
+        if college and college.lower() != "all":
+            query = query.filter(Event.college_name.ilike(f"%{college[:50]}%"))
+
+        if event_type and event_type.lower() != "all":
+            query = query.filter(Event.event_type.ilike(f"%{event_type[:40]}%"))
 
         events = query.order_by(Event.event_date.asc()).all()
+
+        # Collect distinct cities and event types for UI filters
+        distinct_cities = [c[0] for c in db.query(Event.city).distinct().all() if c[0]]
+
         return jsonify({
             "success": True,
             "count": len(events),
+            "cities": distinct_cities,
             "events": [event.to_dict() for event in events]
         })
 
@@ -49,7 +66,6 @@ def list_events():
 def get_event(event_id: int):
     """
     Retrieve single event details by ID.
-    Using type-casted integer path parameter prevents injection attacks.
     """
     with get_db() as db:
         event = db.query(Event).filter(Event.id == event_id).first()
@@ -61,15 +77,29 @@ def get_event(event_id: int):
         })
 
 
+@event_bp.route("/events/<int:event_id>/ai-guide", methods=["GET"])
+def get_event_ai_guide(event_id: int):
+    """
+    AI Feature: Generate instant preparation roadmap, required tech stack,
+    and team strategy for an event or hackathon.
+    """
+    with get_db() as db:
+        event = db.query(Event).filter(Event.id == event_id).first()
+        if not event:
+            return jsonify({"success": False, "error": "Event not found."}), 404
+
+        ai_guide = AIEventResearcher.generate_preparation_roadmap(event)
+        return jsonify({
+            "success": True,
+            "ai_guide": ai_guide
+        })
+
+
 @event_bp.route("/events/<int:event_id>/register", methods=["POST"])
 @login_required
 def register_for_event(event_id: int):
     """
     Register authenticated user for an event.
-    SECURITY:
-    - Requires valid JWT authentication (@login_required).
-    - Uses current_user identity from the token, preventing impersonation.
-    - Uses database constraint to block duplicate registrations.
     """
     user_id = request.current_user["id"]
 
@@ -129,7 +159,6 @@ def get_my_registrations():
 def cancel_registration(event_id: int):
     """
     Cancel an existing event registration.
-    Uses DELETE HTTP verb for resource removal.
     """
     user_id = request.current_user["id"]
     with get_db() as db:
@@ -154,11 +183,6 @@ def cancel_registration(event_id: int):
 def download_attachment(event_id: int):
     """
     Secure file download endpoint.
-    SECURITY FEATURES:
-    - Path Traversal Protection: Uses send_from_directory which enforces the file
-      stays within the configured upload directory.
-    - Prevents direct execution by setting safe download headers.
-    - Sets 'X-Content-Type-Options: nosniff' to stop browser MIME confusion attacks.
     """
     with get_db() as db:
         event = db.query(Event).filter(Event.id == event_id).first()
@@ -168,7 +192,6 @@ def download_attachment(event_id: int):
         filename = event.attachment_filename
         download_name = event.attachment_original_name or "event-attachment"
 
-        # Check if file actually exists on filesystem
         full_path = os.path.join(Config.UPLOAD_FOLDER, filename)
         if not os.path.isfile(full_path):
             log_security_alert("MISSING_ATTACHMENT_FILE", request.remote_addr, f"File {filename} missing on disk")
@@ -180,6 +203,5 @@ def download_attachment(event_id: int):
             as_attachment=True,
             download_name=download_name
         )
-        # Prevent MIME type sniffing
         response.headers["X-Content-Type-Options"] = "nosniff"
         return response
