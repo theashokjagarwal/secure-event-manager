@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - EventSecure</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <span>🛡️ EventSecure</span>
+        <span class="brand-badge" style="background-color: #fee2e2; color: #b91c1c;">Admin Mode</span>
+      </a>
+      <nav class="nav-links" id="navbar-auth-links">
+        <a href="/" class="nav-link">Public Catalog</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-size: 1.75rem; font-weight: 700;">Administrator Operations</h1>
+        <p style="color: #64748b; font-size: 0.95rem;">
+          Manage events, monitor attendee registrations, and publish safe attachments.
+        </p>
+      </div>
+      <div>
+        <button id="btn-open-create-modal" class="btn btn-primary">
+          + Create New Event
+        </button>
+      </div>
+    </div>
+
+    <!-- Friendly Notifications -->
+    <div id="admin-alert" class="alert"></div>
+
+    <!-- Statistics Overview Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Events</div>
+        <div class="stat-value" id="stat-total-events">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Registered Attendees</div>
+        <div class="stat-value" id="stat-total-registrations">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Platform Accounts</div>
+        <div class="stat-value" id="stat-total-users">0</div>
+      </div>
+    </div>
+
+    <!-- Events Management Table -->
+    <section>
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">All Events</h2>
+      <div class="table-responsive">
+        <table class="data-table" id="admin-events-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title & Category</th>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Registrations</th>
+              <th>Attachment</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-events-tbody">
+            <!-- Populated securely via admin.js using textContent -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Create Event Modal -->
+    <div class="modal-backdrop" id="create-event-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Create New Event</h3>
+          <button class="modal-close" id="btn-close-create-modal">&times;</button>
+        </div>
+        <form id="create-event-form">
+          <div class="modal-body">
+            <div id="create-event-alert" class="alert"></div>
+
+            <div class="form-group">
+              <label class="form-label" for="ev-title">Event Title *</label>
+              <input type="text" id="ev-title" class="form-input" required minlength="3" maxlength="120" placeholder="e.g. Cloud Security Summit 2026">
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 1rem;">
+              <div style="flex: 1;">
+                <label class="form-label" for="ev-cat">Category *</label>
+                <select id="ev-cat" class="form-select" required>
+                  <option value="Security">Security</option>
+                  <option value="Development">Development</option>
+                  <option value="Cloud">Cloud & DevOps</option>
+                  <option value="Networking">Networking</option>
+                  <option value="General">General</option>
+                </select>
+              </div>
+              <div style="flex: 1;">
+                <label class="form-label" for="ev-date">Date & Time *</label>
+                <input type="datetime-local" id="ev-date" class="form-input" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ev-loc">Location *</label>
+              <input type="text" id="ev-loc" class="form-input" required minlength="3" maxlength="150" placeholder="e.g. Virtual or Main Auditorium">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ev-desc">Event Description *</label>
+              <textarea id="ev-desc" class="form-textarea" rows="3" required minlength="10" maxlength="2000" placeholder="Describe the topics, agenda, and target audience..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="ev-file">Event Attachment / Flyer (Optional)</label>
+              <input type="file" id="ev-file" class="form-input" accept=".pdf,.docx,.png,.jpg,.jpeg">
+              <div class="form-hint">
+                Safe formats allowed: <strong>PDF, DOCX, PNG, JPG</strong> (Max 5MB). Executable files (.exe, .sh, .bat) are strictly rejected.
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" id="btn-submit-event" class="btn btn-primary">Create Event</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Attendees List Modal -->
+    <div class="modal-backdrop" id="attendees-modal">
+      <div class="modal-content" style="max-width: 650px;">
+        <div class="modal-header">
+          <h3 id="attendees-modal-title">Event Attendees</h3>
+          <button class="modal-close" id="btn-close-attendees-modal">&times;</button>
+        </div>
+        <div class="modal-body" id="attendees-list-container">
+          <!-- Populated safely via admin.js -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>EventSecure &copy; 2026. Admin Console protected by RBAC.</p>
+  </footer>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/admin.js"></script>
+</body>
+</html>

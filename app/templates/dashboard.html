@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendee Dashboard - EventSecure</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <span>🛡️ EventSecure</span>
+      </a>
+      <nav class="nav-links" id="navbar-auth-links">
+        <a href="/" class="nav-link">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <h1 style="font-size: 1.75rem; font-weight: 700;">
+          Welcome back, <span id="user-welcome-name">Attendee</span>!
+        </h1>
+        <p style="color: #64748b; font-size: 0.95rem;">
+          Manage your confirmed event registrations and download session materials.
+        </p>
+      </div>
+      <div>
+        <a href="/" class="btn btn-primary btn-sm">+ Browse More Events</a>
+      </div>
+    </div>
+
+    <!-- Friendly Notifications -->
+    <div id="dashboard-alert" class="alert"></div>
+
+    <section>
+      <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">My Registered Events</h2>
+      <div id="dashboard-registrations" class="card-grid">
+        <!-- Injected safely via events.js without innerHTML -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>EventSecure &copy; 2026. Secure Attendee Portal.</p>
+  </footer>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/events.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account - EventSecure</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <span>🛡️ EventSecure</span>
+      </a>
+      <nav class="nav-links">
+        <a href="/" class="nav-link">Home</a>
+        <a href="/login" class="nav-link">Log In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="auth-wrapper">
+      <div class="auth-header">
+        <h1>Create Account</h1>
+        <p>Register to RSVP and attend exclusive tech events</p>
+      </div>
+
+      <!-- Friendly Notification / Error Banner -->
+      <div id="auth-alert" class="alert"></div>
+
+      <form id="register-form">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Full Name</label>
+          <input
+            type="text"
+            id="reg-name"
+            class="form-input"
+            placeholder="Jane Doe"
+            required
+            minlength="2"
+            maxlength="80"
+            autocomplete="name"
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Email Address</label>
+          <input
+            type="email"
+            id="reg-email"
+            class="form-input"
+            placeholder="jane@example.com"
+            required
+            maxlength="120"
+            autocomplete="email"
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-password">Password</label>
+          <input
+            type="password"
+            id="reg-password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+            minlength="8"
+            maxlength="128"
+            autocomplete="new-password"
+          >
+
+          <!-- Password Requirement Checklist -->
+          <ul class="pwd-checklist">
+            <li id="chk-len" class="pwd-item" data-label="At least 8 characters">○ At least 8 characters</li>
+            <li id="chk-upper" class="pwd-item" data-label="One uppercase letter (A-Z)">○ One uppercase letter (A-Z)</li>
+            <li id="chk-lower" class="pwd-item" data-label="One lowercase letter (a-z)">○ One lowercase letter (a-z)</li>
+            <li id="chk-num" class="pwd-item" data-label="One number (0-9)">○ One number (0-9)</li>
+            <li id="chk-spec" class="pwd-item" data-label="One special character (!@#$%^&*)">○ One special character (!@#$%^&*)</li>
+          </ul>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-confirm-password">Confirm Password</label>
+          <input
+            type="password"
+            id="reg-confirm-password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+            minlength="8"
+            maxlength="128"
+            autocomplete="new-password"
+          >
+        </div>
+
+        <button type="submit" id="register-submit-btn" class="btn btn-primary" style="width: 100%;">
+          Create Account
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="/login">Sign in here</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>EventSecure &copy; 2026. Passwords stored with salted BCrypt hashes.</p>
+  </footer>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+</body>
+</html>

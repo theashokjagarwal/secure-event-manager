@@ -1,0 +1,12 @@
+# Core Web Framework
+Flask>=3.0.0
+flask-cors>=4.0.0
+
+# Database ORM (Supports SQLite, MySQL, PostgreSQL without code changes)
+SQLAlchemy>=2.0.0
+pymysql>=1.1.0
+
+# Authentication & Security
+bcrypt>=4.1.0
+PyJWT>=2.8.0
+python-dotenv>=1.0.0

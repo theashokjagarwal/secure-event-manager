@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventSecure - Secure Event Management</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Navigation Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="/" class="brand-logo">
+        <span>🛡️ EventSecure</span>
+        <span class="brand-badge">Hardened</span>
+      </a>
+      <nav class="nav-links" id="navbar-auth-links">
+        <!-- Injected dynamically by auth.js -->
+        <a href="/login" class="nav-link">Log In</a>
+        <a href="/register" class="btn btn-primary btn-sm">Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    <!-- Hero Banner -->
+    <section style="margin-bottom: 2rem; text-align: center; padding: 2rem 1rem;">
+      <h1 style="font-size: 2.2rem; font-weight: 800; color: #0f172a; margin-bottom: 0.75rem;">
+        Discover & Attend Secure Tech Events
+      </h1>
+      <p style="color: #64748b; max-width: 650px; margin: 0 auto; font-size: 1.05rem;">
+        A high-security, full-stack event platform built with defense-in-depth:
+        SQL injection prevention, BCrypt hashing, JWT sessions, XSS escaping, and safe file uploads.
+      </p>
+    </section>
+
+    <!-- Search and Filter Bar -->
+    <section class="search-filter-bar">
+      <form id="search-form" style="display: flex; gap: 1rem; flex: 1; flex-wrap: wrap;">
+        <div class="search-input-wrap">
+          <input
+            type="text"
+            id="search-input"
+            class="form-input"
+            placeholder="Search events by title, description or location..."
+            maxlength="100"
+          >
+        </div>
+        <select id="category-filter" class="form-select" style="max-width: 200px;">
+          <option value="">All Categories</option>
+          <option value="Security">Security</option>
+          <option value="Development">Development</option>
+          <option value="Cloud">Cloud & DevOps</option>
+          <option value="Networking">Networking</option>
+          <option value="General">General</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Search</button>
+      </form>
+    </section>
+
+    <!-- Events Grid Container -->
+    <section>
+      <h2 style="font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem;">Upcoming Events</h2>
+      <div id="events-container" class="card-grid">
+        <!-- Rendered safely via events.js without innerHTML -->
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>EventSecure &copy; 2026. Built with strict OWASP security standards.</p>
+  </footer>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/auth.js"></script>
+  <script src="/static/js/events.js"></script>
+</body>
+</html>

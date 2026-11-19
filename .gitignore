@@ -1,0 +1,29 @@
+# Environment variables (SECURITY: Never commit secrets to version control)
+.env
+
+# Virtual Environment
+venv/
+env/
+ENV/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploaded user files (keep directory structure via .gitkeep)
+app/uploads/*
+!app/uploads/.gitkeep
+
+# Application logs (SECURITY: Logs may contain incident data)
+*.log
+logs/
+
+# Operating system files
+.DS_Store
+Thumbs.db
