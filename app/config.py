@@ -45,15 +45,19 @@ class Config:
         SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4"
     else:
         # SQLite Connection (Default for easy zero-setup local running)
-        SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "events.db")
-        db_file = BASE_DIR / SQLITE_DB_PATH
+        # On Vercel serverless environment, local directory is read-only; store in /tmp
+        if os.getenv("VERCEL"):
+            db_file = Path("/tmp/events.db")
+        else:
+            SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "events.db")
+            db_file = BASE_DIR / SQLITE_DB_PATH
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{db_file}"
 
     # --------------------------------------------------------------------------
     # CORS (Cross-Origin Resource Sharing) Configuration
     # --------------------------------------------------------------------------
     # SECURITY: Only allow trusted origins to make API requests to this backend.
-    CORS_ORIGIN = os.getenv("CORS_ORIGIN", "http://127.0.0.1:5050")
+    CORS_ORIGIN = os.getenv("CORS_ORIGIN", "*")
 
     # --------------------------------------------------------------------------
     # File Upload Security Settings
@@ -62,7 +66,10 @@ class Config:
     MAX_CONTENT_LENGTH_MB = int(os.getenv("MAX_CONTENT_LENGTH_MB", 5))
     MAX_CONTENT_LENGTH = MAX_CONTENT_LENGTH_MB * 1024 * 1024
 
-    UPLOAD_FOLDER = BASE_DIR / os.getenv("UPLOAD_FOLDER", "app/uploads")
+    if os.getenv("VERCEL"):
+        UPLOAD_FOLDER = Path("/tmp/uploads")
+    else:
+        UPLOAD_FOLDER = BASE_DIR / os.getenv("UPLOAD_FOLDER", "app/uploads")
 
     # SECURITY: Strict whitelist of permitted file extensions
     ALLOWED_EXTENSIONS = {"pdf", "docx", "png", "jpg", "jpeg"}

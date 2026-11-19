@@ -23,10 +23,15 @@ def configure_logging(app: Flask):
         stream_h.setFormatter(log_format)
         logger.addHandler(stream_h)
 
-        log_path = Config.BASE_DIR / "app.log"
-        file_h = logging.FileHandler(log_path, encoding="utf-8")
-        file_h.setFormatter(log_format)
-        logger.addHandler(file_h)
+        # On Vercel or read-only environments, stream handler to stdout/stderr is standard
+        if not os.getenv("VERCEL"):
+            try:
+                log_path = Config.BASE_DIR / "app.log"
+                file_h = logging.FileHandler(log_path, encoding="utf-8")
+                file_h.setFormatter(log_format)
+                logger.addHandler(file_h)
+            except OSError:
+                pass
 
 
 def create_app() -> Flask:
@@ -34,7 +39,11 @@ def create_app() -> Flask:
     Application Factory Pattern.
     Builds and configures the Flask application with comprehensive security features.
     """
-    app = Flask(__name__, template_folder="templates", static_folder="static")
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    template_dir = os.path.join(base_dir, "templates")
+    static_dir = os.path.join(base_dir, "static")
+
+    app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
     app.config.from_object(Config)
 
     # Configure Logging
